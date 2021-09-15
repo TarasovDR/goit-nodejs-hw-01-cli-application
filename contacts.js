@@ -1,8 +1,9 @@
 // const fs = require("fs").promises;
 const fs = require("fs");
 const path = require("path");
+const { v4 } = require("uuid");
 
-const contactsPath = path.join(__dirname, "/db/contacts.json");
+const contactsPath = path.join(__dirname, "db/contacts.json");
 
 const listContacts = async () => {
   await fs.readFile(contactsPath, "utf-8", (error, data) => {
@@ -29,17 +30,32 @@ const getContactById = async (contactId) => {
   });
 };
 
-function removeContact(contactId) {
-  // ...твой код
-}
+const addContact = async (name, email, phone) => {
+  await fs.readFile(contactsPath, "utf-8", (error, data) => {
+    if (error) {
+      throw new Error("Cannot read file");
+    }
+    const contacts = JSON.parse(data);
+    const newContact = { id: v4(), name, email, phone };
+    contacts.push(newContact);
+    console.log("Contact is added!");
+    console.table(newContact);
 
-// function addContact(name, email, phone) {
+    fs.writeFile(contactsPath, JSON.stringify(contacts), (error) => {
+      if (error) {
+        throw new Error("Cannot read file");
+      }
+    });
+  });
+};
+
+// function removeContact(contactId) {
 //   // ...твой код
 // }
 
 module.exports = {
-  // listContacts,
+  listContacts,
   getContactById,
+  addContact,
   // removeContact,
-  // addContact,
 };
